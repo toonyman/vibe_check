@@ -279,8 +279,8 @@ export default function VibeCheckApp() {
 
   return (
     <div className={`min-h-screen transition-colors duration-300 p-4 md:p-8 ${isDarkMode
-        ? 'bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white'
-        : 'bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900'
+      ? 'bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white'
+      : 'bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900'
       }`}>
       <div className="max-w-6xl mx-auto">
         {/* Language & Theme Toggle */}
@@ -288,8 +288,8 @@ export default function VibeCheckApp() {
           <button
             onClick={() => setIsDarkMode(!isDarkMode)}
             className={`p-2 rounded-full border transition-all ${isDarkMode
-                ? 'bg-slate-800/50 border-slate-700/50 text-yellow-400 hover:bg-slate-700/50'
-                : 'bg-white border-slate-200 text-purple-600 shadow-sm hover:bg-slate-50'
+              ? 'bg-slate-800/50 border-slate-700/50 text-yellow-400 hover:bg-slate-700/50'
+              : 'bg-white border-slate-200 text-purple-600 shadow-sm hover:bg-slate-50'
               }`}
             aria-label="Toggle dark mode"
           >
@@ -347,8 +347,8 @@ export default function VibeCheckApp() {
                   onKeyPress={(e) => e.key === 'Enter' && analyzeVibe(keyword)}
                   placeholder={t.placeholder}
                   className={`w-full pl-11 pr-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all ${isDarkMode
-                      ? 'bg-slate-700/50 text-white placeholder-gray-400'
-                      : 'bg-slate-50 text-slate-900 border border-slate-200 placeholder-slate-400'
+                    ? 'bg-slate-700/50 text-white placeholder-gray-400'
+                    : 'bg-slate-50 text-slate-900 border border-slate-200 placeholder-slate-400'
                     }`}
                 />
               </div>
@@ -372,8 +372,8 @@ export default function VibeCheckApp() {
                     analyzeVibe(k);
                   }}
                   className={`px-3 py-1 rounded-full text-sm transition-all ${isDarkMode
-                      ? 'bg-slate-700/50 hover:bg-slate-600/50 text-white'
-                      : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                    ? 'bg-slate-700/50 hover:bg-slate-600/50 text-white'
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
                     }`}
                 >
                   {k}
@@ -393,7 +393,7 @@ export default function VibeCheckApp() {
           {vibeData && (
             <section className="grid md:grid-cols-3 gap-6 mb-6" aria-label="Sentiment analysis results">
               {/* Main Vibe Score */}
-              <div className={`backdrop-blur-lg rounded-2xl p-8 shadow-2xl transition-all ${isDarkMode ? 'bg-slate-800/50' : 'bg-white border border-slate-100'
+              <div className={`md:col-span-2 backdrop-blur-lg rounded-2xl p-8 shadow-2xl transition-all ${isDarkMode ? 'bg-slate-800/50' : 'bg-white border border-slate-100'
                 }`}>
                 <div className="flex items-center justify-between mb-6">
                   <div>
