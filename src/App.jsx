@@ -16,15 +16,25 @@ export default function VibeCheckApp() {
     try {
       // Vercel 서버리스 함수 호출 (API 키는 서버에 안전하게 보관됨)
       const response = await fetch(`/api/news?keyword=${encodeURIComponent(searchTerm)}`);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch news data');
-      }
 
       const data = await response.json();
-      
-      if (data.error) {
-        throw new Error(data.error);
+
+      // API 에러 처리
+      if (!response.ok || data.error) {
+        const errorMsg = data.details || data.error || 'Failed to fetch news data';
+        const errorCode = data.errorCode || '';
+
+        // 에러 코드별 사용자 친화적 메시지
+        let userMessage = errorMsg;
+        if (errorCode === 'apiKeyInvalid') {
+          userMessage = 'API key is invalid. Please check environment variables in Vercel.';
+        } else if (errorCode === 'rateLimited') {
+          userMessage = 'Rate limit exceeded. Please try again later.';
+        } else if (errorCode === 'apiKeyMissing') {
+          userMessage = 'API key not configured. Please set NEWS_API_KEY in Vercel.';
+        }
+
+        throw new Error(userMessage);
       }
 
       // 감성 분석
@@ -47,10 +57,10 @@ export default function VibeCheckApp() {
 
     articles.forEach(article => {
       const text = `${article.title} ${article.description || ''}`.toLowerCase();
-      
+
       const posScore = positiveWords.filter(w => text.includes(w)).length;
       const negScore = negativeWords.filter(w => text.includes(w)).length;
-      
+
       let sentiment = 'neutral';
       if (posScore > negScore) sentiment = 'positive';
       else if (negScore > posScore) sentiment = 'negative';
@@ -193,10 +203,9 @@ export default function VibeCheckApp() {
               {/* Progress Bar */}
               <div className="h-4 bg-slate-700 rounded-full overflow-hidden">
                 <div
-                  className={`h-full transition-all duration-1000 ${
-                    vibeData.vibeScore >= 65 ? 'bg-green-500' :
-                    vibeData.vibeScore >= 45 ? 'bg-yellow-500' : 'bg-red-500'
-                  }`}
+                  className={`h-full transition-all duration-1000 ${vibeData.vibeScore >= 65 ? 'bg-green-500' :
+                      vibeData.vibeScore >= 45 ? 'bg-yellow-500' : 'bg-red-500'
+                    }`}
                   style={{ width: `${vibeData.vibeScore}%` }}
                 />
               </div>
@@ -277,13 +286,12 @@ export default function VibeCheckApp() {
                   onClick={() => article.url && window.open(article.url, '_blank')}
                 >
                   <div className="flex items-start gap-3">
-                    <div className={`mt-1 flex-shrink-0 ${
-                      article.sentiment === 'positive' ? 'text-green-400' :
-                      article.sentiment === 'negative' ? 'text-red-400' : 'text-yellow-400'
-                    }`}>
+                    <div className={`mt-1 flex-shrink-0 ${article.sentiment === 'positive' ? 'text-green-400' :
+                        article.sentiment === 'negative' ? 'text-red-400' : 'text-yellow-400'
+                      }`}>
                       {article.sentiment === 'positive' ? <TrendingUp className="w-5 h-5" /> :
-                       article.sentiment === 'negative' ? <TrendingDown className="w-5 h-5" /> :
-                       <Minus className="w-5 h-5" />}
+                        article.sentiment === 'negative' ? <TrendingDown className="w-5 h-5" /> :
+                          <Minus className="w-5 h-5" />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="font-semibold mb-1 line-clamp-2">{article.title}</h4>

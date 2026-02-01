@@ -31,18 +31,36 @@ export default async function handler(req, res) {
 
   try {
     // News API 호출
-    const response = await fetch(
-      `https://newsapi.org/v2/everything?q=${encodeURIComponent(keyword)}&language=en&sortBy=publishedAt&pageSize=50&apiKey=${apiKey}`
-    );
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to fetch news');
-    }
-
+    const newsApiUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(keyword)}&language=en&sortBy=publishedAt&pageSize=50&apiKey=${apiKey}`;
+    
+    console.log('Fetching news for keyword:', keyword);
+    
+    const response = await fetch(newsApiUrl);
     const data = await response.json();
 
+    // News API 에러 처리
+    if (!response.ok || data.status === 'error') {
+      const errorMessage = data.message || 'Failed to fetch news';
+      const errorCode = data.code || 'unknown';
+      
+      console.error('News API Error:', {
+        status: response.status,
+        code: errorCode,
+        message: errorMessage,
+        keyword: keyword
+      });
+
+      return res.status(response.status || 500).json({ 
+        error: errorMessage,
+        errorCode: errorCode,
+        success: false,
+        details: `News API returned error: ${errorCode} - ${errorMessage}`
+      });
+    }
+
     // 성공 응답
+    console.log(`Successfully fetched ${data.articles?.length || 0} articles for "${keyword}"`);
+    
     return res.status(200).json({
       success: true,
       articles: data.articles || [],
@@ -50,10 +68,11 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('News API Error:', error);
+    console.error('Unexpected error:', error);
     return res.status(500).json({ 
       error: error.message || 'Failed to fetch news data',
-      success: false 
+      success: false,
+      details: `Server error: ${error.message}`
     });
   }
 }
