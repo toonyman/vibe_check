@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Search, TrendingUp, TrendingDown, Minus, RefreshCw, BarChart3, Sun, Moon } from 'lucide-react';
+import { Search, TrendingUp, TrendingDown, Minus, RefreshCw, BarChart3, Sun, Moon, Calendar } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 
 export default function VibeCheckApp() {
   const [keyword, setKeyword] = useState('Bitcoin');
@@ -14,6 +15,9 @@ export default function VibeCheckApp() {
     en: {
       title: 'Vibe-Check',
       subtitle: 'Global Sentiment Tracker',
+      vibeTrend: 'Vibe Trend',
+      period7d: '7 Days',
+      period30d: '30 Days',
       vibeScore: 'Vibe Score',
       placeholder: 'Enter keyword (e.g., Bitcoin, Tesla, K-Pop)',
       analyze: 'Analyze',
@@ -38,6 +42,9 @@ export default function VibeCheckApp() {
     ko: {
       title: '바이브-체크',
       subtitle: '전 세계 뉴스 감성 분석기',
+      vibeTrend: '감성 추이',
+      period7d: '7일',
+      period30d: '30일',
       vibeScore: '바이브 점수',
       placeholder: '키워드 입력 (예: 비트코인, 테슬라, 삼성전자)',
       analyze: '분석하기',
@@ -62,6 +69,9 @@ export default function VibeCheckApp() {
     jp: {
       title: 'バイブ・チェック',
       subtitle: 'グローバル感情トラッカー',
+      vibeTrend: '感情の推移',
+      period7d: '7日間',
+      period30d: '30日間',
       vibeScore: 'バイブスコア',
       placeholder: 'キーワード入力 (例: ビットコイン, テスラ, K-POP)',
       analyze: '分析する',
@@ -86,6 +96,9 @@ export default function VibeCheckApp() {
     es: {
       title: 'Vibe-Check',
       subtitle: 'Rastreador de Sentimiento Global',
+      vibeTrend: 'Tendencia de Vibe',
+      period7d: '7 Días',
+      period30d: '30 Días',
       vibeScore: 'Puntuación Vibe',
       placeholder: 'Palabra clave (ej., Bitcoin, Tesla, K-Pop)',
       analyze: 'Analizar',
@@ -222,6 +235,25 @@ export default function VibeCheckApp() {
     const total = articles.length;
     const vibeScore = total > 0 ? Math.round(((positive - negative) / total) * 50 + 50) : 50;
 
+    // Trend Data Calculation
+    const trendMap = {};
+    articles.forEach(article => {
+      if (!article.publishedAt) return;
+      const date = article.publishedAt.split('T')[0];
+      if (!trendMap[date]) trendMap[date] = { date, pos: 0, neg: 0, count: 0 };
+
+      if (article.sentiment === 'positive') trendMap[date].pos++;
+      else if (article.sentiment === 'negative') trendMap[date].neg++;
+      trendMap[date].count++;
+    });
+
+    const trendData = Object.values(trendMap)
+      .map(d => ({
+        date: d.date,
+        score: Math.round(((d.pos - d.neg) / d.count) * 50 + 50)
+      }))
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+
     return {
       keyword: term,
       vibeScore,
@@ -233,6 +265,7 @@ export default function VibeCheckApp() {
       negativePercent: total > 0 ? Math.round((negative / total) * 100) : 0,
       neutralPercent: total > 0 ? Math.round((neutral / total) * 100) : 0,
       articles: analyzedArticles.slice(0, 10),
+      trendData,
       timestamp: new Date().toLocaleString()
     };
   };
@@ -488,6 +521,65 @@ export default function VibeCheckApp() {
                     </div>
                   </div>
                 </div>
+              </div>
+            </section>
+          )}
+
+          {/* Vibe Trend Chart */}
+          {vibeData && vibeData.trendData.length > 0 && (
+            <section className={`backdrop-blur-lg rounded-2xl p-6 mb-6 shadow-2xl transition-all ${isDarkMode ? 'bg-slate-800/50' : 'bg-white border border-slate-100'
+              }`}>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-semibold flex items-center gap-2">
+                  <Calendar className="w-5 h-5" />
+                  {t.vibeTrend}
+                </h3>
+              </div>
+
+              <div className="h-64 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={vibeData.trendData}>
+                    <defs>
+                      <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? '#334155' : '#e2e8f0'} vertical={false} />
+                    <XAxis
+                      dataKey="date"
+                      stroke={isDarkMode ? '#94a3b8' : '#64748b'}
+                      fontSize={10}
+                      tickFormatter={(str) => {
+                        const date = new Date(str);
+                        return `${date.getMonth() + 1}/${date.getDate()}`;
+                      }}
+                    />
+                    <YAxis
+                      stroke={isDarkMode ? '#94a3b8' : '#64748b'}
+                      fontSize={10}
+                      domain={[0, 100]}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: isDarkMode ? '#1e293b' : '#ffffff',
+                        borderColor: isDarkMode ? '#334155' : '#e2e8f0',
+                        color: isDarkMode ? '#f8fafc' : '#0f172a',
+                        borderRadius: '8px',
+                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+                      }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="score"
+                      stroke="#8b5cf6"
+                      strokeWidth={3}
+                      fillOpacity={1}
+                      fill="url(#colorScore)"
+                      animationDuration={1500}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
               </div>
             </section>
           )}

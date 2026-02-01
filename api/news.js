@@ -37,7 +37,7 @@ export default async function handler(req, res) {
     else if (language === 'jp') newsApiLang = 'jp';
     else if (language === 'es') newsApiLang = 'es';
 
-    const newsApiUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(keyword)}&language=${newsApiLang}&sortBy=publishedAt&pageSize=50&apiKey=${apiKey}`;
+    const newsApiUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(keyword)}&language=${newsApiLang}&sortBy=publishedAt&pageSize=100&apiKey=${apiKey}`;
 
     console.log('Fetching news for keyword:', keyword);
 
