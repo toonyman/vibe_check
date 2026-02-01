@@ -7,6 +7,7 @@ export default function VibeCheckApp() {
   const [vibeData, setVibeData] = useState(null);
   const [error, setError] = useState(null);
   const [language, setLanguage] = useState('en');
+  const [displayKeywords, setDisplayKeywords] = useState([]);
 
   const translations = {
     en: {
@@ -59,9 +60,25 @@ export default function VibeCheckApp() {
 
   const t = translations[language];
 
-  const presetKeywords = language === 'en'
-    ? ['Bitcoin', 'Tesla', 'K-Pop', 'AI', 'Apple']
-    : ['비트코인', '테슬라', '삼성전자', '인공지능', '애플'];
+  const keywordPool = {
+    en: [
+      'Bitcoin', 'Tesla', 'K-Pop', 'AI', 'Apple', 'NVIDIA', 'Ethereum', 'Amazon', 'Microsoft', 'SpaceX',
+      'Climate Change', 'Metaverse', 'ESG', 'ChatGPT', 'Netflix', 'Disney', 'Google', 'NASA', 'Ferrari',
+      'Samsung', 'Sony', 'Intel', 'AMD', 'Meta', 'TikTok', 'Instagram', 'Spotify', 'Uber', 'Airbnb', 'Nike'
+    ],
+    ko: [
+      '비트코인', '테슬라', '삼성전자', '인공지능', '애플', '엔비디아', '이더리움', '카카오', '네이버', '현대자동차',
+      '기후변화', '메타버스', '챗GPT', '넷플릭스', '디즈니', '구글', '나사', '페라리', '삼성', '소니',
+      '인텔', 'AMD', '메타', '틱톡', '인스타그램', '스포티파이', '우버', '에어비앤비', '나이키', '불닭볶음면',
+      '에스파', '뉴진스', '손흥민', '오징어게임', '한강', '봉준호', '싸이', '방탄소년단', '리그오브레전드', '페이커'
+    ]
+  };
+
+  const getRandomKeywords = (lang, count = 10) => {
+    const pool = keywordPool[lang] || keywordPool['en'];
+    const shuffled = [...pool].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
+  };
 
   const analyzeVibe = async (searchTerm) => {
     setLoading(true);
@@ -170,6 +187,7 @@ export default function VibeCheckApp() {
 
   useEffect(() => {
     analyzeVibe('Bitcoin');
+    setDisplayKeywords(getRandomKeywords(language, 10));
 
     // Initialize Google AdSense ads
     try {
@@ -177,7 +195,7 @@ export default function VibeCheckApp() {
     } catch (e) {
       console.error('AdSense initialization error:', e);
     }
-  }, []);
+  }, [language]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white p-4 md:p-8">
@@ -235,7 +253,7 @@ export default function VibeCheckApp() {
 
             {/* Preset Keywords */}
             <div className="flex flex-wrap gap-2">
-              {presetKeywords.map(k => (
+              {displayKeywords.map(k => (
                 <button
                   key={k}
                   onClick={() => {
