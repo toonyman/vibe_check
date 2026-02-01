@@ -238,7 +238,7 @@ export default function VibeCheckApp() {
 
     // Trend Data Calculation
     const trendMap = {};
-    articles.forEach(article => {
+    analyzedArticles.forEach(article => {
       if (!article.publishedAt) return;
       const date = article.publishedAt.split('T')[0];
       if (!trendMap[date]) trendMap[date] = { date, pos: 0, neg: 0, count: 0 };
@@ -539,8 +539,8 @@ export default function VibeCheckApp() {
                   <button
                     onClick={() => setTrendPeriod('7d')}
                     className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${trendPeriod === '7d'
-                        ? (isDarkMode ? 'bg-purple-600 text-white' : 'bg-white text-purple-600 shadow-sm')
-                        : (isDarkMode ? 'text-gray-400 hover:text-white' : 'text-slate-500 hover:text-slate-900')
+                      ? (isDarkMode ? 'bg-purple-600 text-white' : 'bg-white text-purple-600 shadow-sm')
+                      : (isDarkMode ? 'text-gray-400 hover:text-white' : 'text-slate-500 hover:text-slate-900')
                       }`}
                   >
                     {t.period7d}
@@ -548,8 +548,8 @@ export default function VibeCheckApp() {
                   <button
                     onClick={() => setTrendPeriod('30d')}
                     className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${trendPeriod === '30d'
-                        ? (isDarkMode ? 'bg-purple-600 text-white' : 'bg-white text-purple-600 shadow-sm')
-                        : (isDarkMode ? 'text-gray-400 hover:text-white' : 'text-slate-500 hover:text-slate-900')
+                      ? (isDarkMode ? 'bg-purple-600 text-white' : 'bg-white text-purple-600 shadow-sm')
+                      : (isDarkMode ? 'text-gray-400 hover:text-white' : 'text-slate-500 hover:text-slate-900')
                       }`}
                   >
                     {t.period30d}
