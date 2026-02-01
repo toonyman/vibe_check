@@ -112,6 +112,13 @@ export default function VibeCheckApp() {
 
   useEffect(() => {
     analyzeVibe('Bitcoin');
+
+    // Initialize Google AdSense ads
+    try {
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (e) {
+      console.error('AdSense initialization error:', e);
+    }
   }, []);
 
   return (
@@ -313,9 +320,16 @@ export default function VibeCheckApp() {
           )}
 
           {/* Footer Ad Space */}
-          <footer className="mt-8 p-6 bg-slate-800/30 rounded-lg text-center text-gray-500 text-sm">
-            <p>💡 Advertisement Space - Monetization Ready</p>
-            <p className="text-xs mt-1">Perfect for crypto exchanges, trading platforms, or market analysis tools</p>
+          <footer className="mt-8">
+            <div className="bg-slate-800/30 rounded-lg p-4 text-center min-h-[100px] flex items-center justify-center border border-slate-700/50">
+              <ins className="adsbygoogle"
+                style={{ display: 'block', width: '100%' }}
+                data-ad-client="ca-pub-7644009675634803"
+                data-ad-slot="auto"
+                data-ad-format="auto"
+                data-full-width-responsive="true"></ins>
+            </div>
+            <p className="text-[10px] text-gray-600 text-center mt-2 uppercase tracking-widest">Advertisement</p>
           </footer>
         </main>
       </div>
