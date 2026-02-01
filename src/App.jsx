@@ -55,6 +55,52 @@ export default function VibeCheckApp() {
       apiKeyInvalid: 'API 키가 유효하지 않습니다. Vercel 환경 변수를 확인해주세요.',
       rateLimited: '요청 한도를 초과했습니다. 나중에 다시 시도해주세요.',
       apiKeyMissing: 'API 키가 설정되지 않았습니다. NEWS_API_KEY를 설정해주세요.',
+    },
+    jp: {
+      title: 'バイブ・チェック',
+      subtitle: 'グローバル感情トラッカー',
+      placeholder: 'キーワード入力 (例: ビットコイン, テスラ, K-POP)',
+      analyze: '分析する',
+      analyzing: '分析中...',
+      breakdown: '感情分析の内訳',
+      positive: 'ポジティブ',
+      neutral: '中立',
+      negative: 'ネガティブ',
+      recentHeadlines: '最新の見出し',
+      adSpace: '💡 広告スペース - 収益化準備完了',
+      adHint: '仮想通貨取引所や市場分析ツールに最適です',
+      outOf100: '/ 100点',
+      basedOn: '最新',
+      recentArticles: '件の記事に基づく',
+      veryPositive: '非常にポジティブ',
+      veryNegative: '非常にネガティブ',
+      failedFetch: 'ニュースデータの取得に失敗しました',
+      apiKeyInvalid: 'APIキーが無効です。',
+      rateLimited: 'レート制限を超えました。',
+      apiKeyMissing: 'APIキーが設定されていません。',
+    },
+    es: {
+      title: 'Vibe-Check',
+      subtitle: 'Rastreador de Sentimiento Global',
+      placeholder: 'Palabra clave (ej., Bitcoin, Tesla, K-Pop)',
+      analyze: 'Analizar',
+      analyzing: 'Analizando...',
+      breakdown: 'Desglose',
+      positive: 'Positivo',
+      neutral: 'Neutral',
+      negative: 'Negativo',
+      recentHeadlines: 'Titulares Recientes',
+      adSpace: '💡 Espacio Publicitario - Listo para Monetizar',
+      adHint: 'Ideal para exchanges de cripto o herramientas de análisis',
+      outOf100: 'de 100',
+      basedOn: 'Basado en',
+      recentArticles: 'artículos recientes',
+      veryPositive: 'Muy Positivo',
+      veryNegative: 'Muy Negativo',
+      failedFetch: 'Fallo al obtener noticias',
+      apiKeyInvalid: 'Clave API no válida.',
+      rateLimited: 'Límite de velocidad excedido.',
+      apiKeyMissing: 'Falta la clave API.',
     }
   };
 
@@ -71,6 +117,18 @@ export default function VibeCheckApp() {
       '기후변화', '메타버스', '챗GPT', '넷플릭스', '디즈니', '구글', '나사', '페라리', '삼성', '소니',
       '인텔', 'AMD', '메타', '틱톡', '인스타그램', '스포티파이', '우버', '에어비앤비', '나이키', '불닭볶음면',
       '에스파', '뉴진스', '손흥민', '오징어게임', '한강', '봉준호', '싸이', '방탄소년단', '리그오브레전드', '페이커'
+    ],
+    jp: [
+      'ビットコイン', 'テスラ', 'トヨタ', '任天堂', 'ソニー', 'ソフトバンク', 'AI', 'Apple', 'NVIDIA', 'イーサリアム',
+      '気候変動', 'メタバース', 'ChatGPT', 'Netflix', 'ディズニー', 'Google', 'NASA', 'フェラーリ', '三菱', 'ホンダ',
+      'パナソニック', 'キーエンス', 'ユニクロ', 'TikTok', 'Instagram', 'Spotify', 'Uber', 'Airbnb', 'Nike', '大谷翔平',
+      'アニメ', '寿司', '東京オリンピック', '呪術廻戦', '鬼滅の刃', '村上春樹', '坂本龍一', '藤井聡太', '推しの子'
+    ],
+    es: [
+      'Bitcoin', 'Tesla', 'Real Madrid', 'Barcelona', 'AI', 'Apple', 'NVIDIA', 'Ethereum', 'Amazon', 'Microsoft',
+      'Cambio Climático', 'Metaverso', 'ChatGPT', 'Netflix', 'Disney', 'Google', 'NASA', 'Ferrari', 'Zara', 'Santander',
+      'Telefónica', 'Iberdrola', 'Mercadona', 'TikTok', 'Instagram', 'Spotify', 'Uber', 'Airbnb', 'Nike', 'Lionel Messi',
+      'Rosalía', 'Shakira', 'Bad Bunny', 'La Casa de Papel', 'Cervantes', 'Almodóvar', 'Dalí', 'Picasso', 'Paella'
     ]
   };
 
@@ -120,12 +178,21 @@ export default function VibeCheckApp() {
   };
 
   const performSentimentAnalysis = (articles, term) => {
-    const positiveWords = language === 'en'
-      ? ['breakthrough', 'success', 'growth', 'innovation', 'celebrates', 'milestone', 'positive', 'rises', 'gains', 'soars', 'wins', 'surges', 'profit', 'record', 'best']
-      : ['상승', '급등', '호재', '성공', '성장', '혁신', '최고', '기대', '강세', '돌파', '이익', '기록', '최대', '확대', '유망'];
-    const negativeWords = language === 'en'
-      ? ['concerns', 'challenges', 'struggles', 'falls', 'drops', 'crisis', 'fails', 'loss', 'decline', 'hurdles', 'volatility', 'crash', 'worst', 'plunges', 'risks']
-      : ['하락', '급락', '우려', '실패', '감소', '위기', '손실', '악재', '약세', '부진', '충격', '폭락', '최저', '축소', '위험'];
+    const positiveWords = {
+      en: ['breakthrough', 'success', 'growth', 'innovation', 'celebrates', 'milestone', 'positive', 'rises', 'gains', 'soars', 'wins', 'surges', 'profit', 'record', 'best'],
+      ko: ['상승', '급등', '호재', '성공', '성장', '혁신', '최고', '기대', '강세', '돌파', '이익', '기록', '최대', '확대', '유망'],
+      jp: ['上昇', '急上昇', '好材', '最高', '成功', '成長', '革新', '期待', '強気', '突破', '利益', '記録', '最大', '拡大', '有望'],
+      es: ['avance', 'éxito', 'crecimiento', 'innovación', 'celebra', 'hito', 'positivo', 'sube', 'ganancia', 'dispara', 'gana', 'aumento', 'beneficio', 'récord', 'mejor']
+    };
+    const negativeWords = {
+      en: ['concerns', 'challenges', 'struggles', 'falls', 'drops', 'crisis', 'fails', 'loss', 'decline', 'hurdles', 'volatility', 'crash', 'worst', 'plunges', 'risks'],
+      ko: ['하락', '급락', '우려', '실패', '감소', '위기', '손실', '악재', '약세', '부진', '충격', '폭락', '최저', '축소', '위험'],
+      jp: ['下落', '急落', '懸念', '失敗', '減少', '危機', '損失', '悪材', '弱気', '不振', '衝撃', '暴落', '最低', '縮小', '危険'],
+      es: ['preocupación', 'desafío', 'lucha', 'cae', 'baja', 'crisis', 'falla', 'pérdida', 'caída', 'obstáculo', 'volatilidad', 'choque', 'peor', 'desplome', 'riesgo']
+    };
+
+    const posList = positiveWords[language] || positiveWords['en'];
+    const negList = negativeWords[language] || negativeWords['en'];
 
     let positive = 0, negative = 0, neutral = 0;
     const analyzedArticles = [];
@@ -133,8 +200,8 @@ export default function VibeCheckApp() {
     articles.forEach(article => {
       const text = `${article.title} ${article.description || ''}`.toLowerCase();
 
-      const posScore = positiveWords.filter(w => text.includes(w)).length;
-      const negScore = negativeWords.filter(w => text.includes(w)).length;
+      const posScore = posList.filter(w => text.includes(w)).length;
+      const negScore = negList.filter(w => text.includes(w)).length;
 
       let sentiment = 'neutral';
       if (posScore > negScore) sentiment = 'positive';
@@ -214,6 +281,18 @@ export default function VibeCheckApp() {
               className={`px-4 py-1 rounded-full text-xs font-bold transition-all ${language === 'ko' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'}`}
             >
               KO
+            </button>
+            <button
+              onClick={() => setLanguage('jp')}
+              className={`px-4 py-1 rounded-full text-xs font-bold transition-all ${language === 'jp' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'}`}
+            >
+              JP
+            </button>
+            <button
+              onClick={() => setLanguage('es')}
+              className={`px-4 py-1 rounded-full text-xs font-bold transition-all ${language === 'es' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'}`}
+            >
+              ES
             </button>
           </div>
         </div>

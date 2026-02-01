@@ -31,7 +31,13 @@ export default async function handler(req, res) {
 
   try {
     // News API 호출
-    const newsApiUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(keyword)}&language=${language === 'ko' ? 'ko' : 'en'}&sortBy=publishedAt&pageSize=50&apiKey=${apiKey}`;
+    // News API 호출 - 지원 언어 매핑 (ko, jp, es, en)
+    let newsApiLang = 'en';
+    if (language === 'ko') newsApiLang = 'ko';
+    else if (language === 'jp') newsApiLang = 'jp';
+    else if (language === 'es') newsApiLang = 'es';
+
+    const newsApiUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(keyword)}&language=${newsApiLang}&sortBy=publishedAt&pageSize=50&apiKey=${apiKey}`;
 
     console.log('Fetching news for keyword:', keyword);
 
