@@ -13,6 +13,7 @@ export default function VibeCheckApp() {
     en: {
       title: 'Vibe-Check',
       subtitle: 'Global Sentiment Tracker',
+      vibeScore: 'Vibe Score',
       placeholder: 'Enter keyword (e.g., Bitcoin, Tesla, K-Pop)',
       analyze: 'Analyze',
       analyzing: 'Analyzing...',
@@ -36,6 +37,7 @@ export default function VibeCheckApp() {
     ko: {
       title: '바이브-체크',
       subtitle: '전 세계 뉴스 감성 분석기',
+      vibeScore: '바이브 점수',
       placeholder: '키워드 입력 (예: 비트코인, 테슬라, 삼성전자)',
       analyze: '분석하기',
       analyzing: '분석 중...',
@@ -59,6 +61,7 @@ export default function VibeCheckApp() {
     jp: {
       title: 'バイブ・チェック',
       subtitle: 'グローバル感情トラッカー',
+      vibeScore: 'バイブスコア',
       placeholder: 'キーワード入力 (例: ビットコイン, テスラ, K-POP)',
       analyze: '分析する',
       analyzing: '分析中...',
@@ -82,6 +85,7 @@ export default function VibeCheckApp() {
     es: {
       title: 'Vibe-Check',
       subtitle: 'Rastreador de Sentimiento Global',
+      vibeScore: 'Puntuación Vibe',
       placeholder: 'Palabra clave (ej., Bitcoin, Tesla, K-Pop)',
       analyze: 'Analizar',
       analyzing: 'Analizando...',
@@ -245,11 +249,11 @@ export default function VibeCheckApp() {
   };
 
   const getVibeLabel = (score) => {
-    if (score >= 75) return language === 'en' ? 'Very Positive' : '매우 긍정적';
-    if (score >= 60) return language === 'en' ? 'Positive' : '긍정적';
-    if (score >= 45) return language === 'en' ? 'Neutral' : '중립적';
-    if (score >= 30) return language === 'en' ? 'Negative' : '부정적';
-    return language === 'en' ? 'Very Negative' : '매우 부정적';
+    if (score >= 75) return t.veryPositive;
+    if (score >= 60) return t.positive;
+    if (score >= 45) return t.neutral;
+    if (score >= 30) return t.negative;
+    return t.veryNegative;
   };
 
   useEffect(() => {
@@ -361,7 +365,7 @@ export default function VibeCheckApp() {
               <div className="md:col-span-2 bg-slate-800/50 backdrop-blur-lg rounded-2xl p-8 shadow-2xl">
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <h2 className="text-2xl font-bold mb-1">"{vibeData.keyword}" {language === 'en' ? 'Vibe Score' : '바이브 점수'}</h2>
+                    <h2 className="text-2xl font-bold mb-1">"{vibeData.keyword}" {t.vibeScore}</h2>
                     <p className="text-gray-400 text-sm">{vibeData.timestamp}</p>
                   </div>
                   <div className={`${getVibeColor(vibeData.vibeScore)}`}>
