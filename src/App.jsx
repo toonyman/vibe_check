@@ -22,8 +22,6 @@ export default function VibeCheckApp() {
       neutral: 'Neutral',
       negative: 'Negative',
       recentHeadlines: 'Recent Headlines',
-      adSpace: '💡 Advertisement Space - Monetization Ready',
-      adHint: 'Perfect for crypto exchanges, trading platforms, or market analysis tools',
       outOf100: 'out of 100',
       basedOn: 'Based on',
       recentArticles: 'recent articles',
@@ -46,8 +44,6 @@ export default function VibeCheckApp() {
       neutral: '중립적',
       negative: '부정적',
       recentHeadlines: '최근 주요 뉴스',
-      adSpace: '💡 광고 영역 - 수익화 준비 완료',
-      adHint: '암호화폐 거래소나 시장 분석 도구 광고에 적합합니다',
       outOf100: '/ 100점',
       basedOn: '최근',
       recentArticles: '개의 기사 분석 결과',
@@ -70,8 +66,6 @@ export default function VibeCheckApp() {
       neutral: '中立',
       negative: 'ネガティブ',
       recentHeadlines: '最新の見出し',
-      adSpace: '💡 広告スペース - 収益化準備完了',
-      adHint: '仮想通貨取引所や市場分析ツールに最適です',
       outOf100: '/ 100点',
       basedOn: '最新',
       recentArticles: '件の記事に基づく',
@@ -94,8 +88,6 @@ export default function VibeCheckApp() {
       neutral: 'Neutral',
       negative: 'Negativo',
       recentHeadlines: 'Titulares Recientes',
-      adSpace: '💡 Espacio Publicitario - Listo para Monetizar',
-      adHint: 'Ideal para exchanges de cripto o herramientas de análisis',
       outOf100: 'de 100',
       basedOn: 'Basado en',
       recentArticles: 'artículos recientes',
@@ -259,13 +251,6 @@ export default function VibeCheckApp() {
   useEffect(() => {
     analyzeVibe('Bitcoin');
     setDisplayKeywords(getRandomKeywords(language, 10));
-
-    // Initialize Google AdSense ads
-    try {
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (e) {
-      console.error('AdSense initialization error:', e);
-    }
   }, [language]);
 
   return (
@@ -496,18 +481,6 @@ export default function VibeCheckApp() {
             </article>
           )}
 
-          {/* Footer Ad Space */}
-          <footer className="mt-8">
-            <div className="bg-slate-800/30 rounded-lg p-4 text-center min-h-[100px] flex items-center justify-center border border-slate-700/50">
-              <ins className="adsbygoogle"
-                style={{ display: 'block', width: '100%' }}
-                data-ad-client="ca-pub-7644009675634803"
-                data-ad-slot="auto"
-                data-ad-format="auto"
-                data-full-width-responsive="true"></ins>
-            </div>
-            <p className="text-[10px] text-gray-600 text-center mt-2 uppercase tracking-widest">Advertisement</p>
-          </footer>
         </main>
       </div>
     </div>
