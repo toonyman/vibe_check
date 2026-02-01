@@ -6,16 +6,70 @@ export default function VibeCheckApp() {
   const [loading, setLoading] = useState(false);
   const [vibeData, setVibeData] = useState(null);
   const [error, setError] = useState(null);
+  const [language, setLanguage] = useState('en');
 
-  const presetKeywords = ['Bitcoin', 'Tesla', 'K-Pop', 'AI', 'Climate Change', 'Apple'];
+  const translations = {
+    en: {
+      title: 'Vibe-Check',
+      subtitle: 'Global Sentiment Tracker',
+      placeholder: 'Enter keyword (e.g., Bitcoin, Tesla, K-Pop)',
+      analyze: 'Analyze',
+      analyzing: 'Analyzing...',
+      breakdown: 'Breakdown',
+      positive: 'Positive',
+      neutral: 'Neutral',
+      negative: 'Negative',
+      recentHeadlines: 'Recent Headlines',
+      adSpace: '💡 Advertisement Space - Monetization Ready',
+      adHint: 'Perfect for crypto exchanges, trading platforms, or market analysis tools',
+      outOf100: 'out of 100',
+      basedOn: 'Based on',
+      recentArticles: 'recent articles',
+      veryPositive: 'Very Positive',
+      veryNegative: 'Very Negative',
+      failedFetch: 'Failed to fetch news data',
+      apiKeyInvalid: 'API key is invalid. Please check environment variables in Vercel.',
+      rateLimited: 'Rate limit exceeded. Please try again later.',
+      apiKeyMissing: 'API key not configured. Please set NEWS_API_KEY in Vercel.',
+    },
+    ko: {
+      title: '바이브-체크',
+      subtitle: '전 세계 뉴스 감성 분석기',
+      placeholder: '키워드 입력 (예: 비트코인, 테슬라, 삼성전자)',
+      analyze: '분석하기',
+      analyzing: '분석 중...',
+      breakdown: '감성 분포',
+      positive: '긍정적',
+      neutral: '중립적',
+      negative: '부정적',
+      recentHeadlines: '최근 주요 뉴스',
+      adSpace: '💡 광고 영역 - 수익화 준비 완료',
+      adHint: '암호화폐 거래소나 시장 분석 도구 광고에 적합합니다',
+      outOf100: '/ 100점',
+      basedOn: '최근',
+      recentArticles: '개의 기사 분석 결과',
+      veryPositive: '매우 긍정적',
+      veryNegative: '매우 부정적',
+      failedFetch: '뉴스 데이터를 가져오지 못했습니다',
+      apiKeyInvalid: 'API 키가 유효하지 않습니다. Vercel 환경 변수를 확인해주세요.',
+      rateLimited: '요청 한도를 초과했습니다. 나중에 다시 시도해주세요.',
+      apiKeyMissing: 'API 키가 설정되지 않았습니다. NEWS_API_KEY를 설정해주세요.',
+    }
+  };
+
+  const t = translations[language];
+
+  const presetKeywords = language === 'en'
+    ? ['Bitcoin', 'Tesla', 'K-Pop', 'AI', 'Apple']
+    : ['비트코인', '테슬라', '삼성전자', '인공지능', '애플'];
 
   const analyzeVibe = async (searchTerm) => {
     setLoading(true);
     setError(null);
 
     try {
-      // Vercel 서버리스 함수 호출 (API 키는 서버에 안전하게 보관됨)
-      const response = await fetch(`/api/news?keyword=${encodeURIComponent(searchTerm)}`);
+      // Vercel 서버리스 함수 호출
+      const response = await fetch(`/api/news?keyword=${encodeURIComponent(searchTerm)}&language=${language}`);
 
       const data = await response.json();
 
@@ -27,11 +81,11 @@ export default function VibeCheckApp() {
         // 에러 코드별 사용자 친화적 메시지
         let userMessage = errorMsg;
         if (errorCode === 'apiKeyInvalid') {
-          userMessage = 'API key is invalid. Please check environment variables in Vercel.';
+          userMessage = t.apiKeyInvalid;
         } else if (errorCode === 'rateLimited') {
-          userMessage = 'Rate limit exceeded. Please try again later.';
+          userMessage = t.rateLimited;
         } else if (errorCode === 'apiKeyMissing') {
-          userMessage = 'API key not configured. Please set NEWS_API_KEY in Vercel.';
+          userMessage = t.apiKeyMissing;
         }
 
         throw new Error(userMessage);
@@ -49,8 +103,12 @@ export default function VibeCheckApp() {
   };
 
   const performSentimentAnalysis = (articles, term) => {
-    const positiveWords = ['breakthrough', 'success', 'growth', 'innovation', 'celebrates', 'milestone', 'positive', 'rises', 'gains', 'soars', 'wins', 'surges', 'profit', 'record', 'best'];
-    const negativeWords = ['concerns', 'challenges', 'struggles', 'falls', 'drops', 'crisis', 'fails', 'loss', 'decline', 'hurdles', 'volatility', 'crash', 'worst', 'plunges', 'risks'];
+    const positiveWords = language === 'en'
+      ? ['breakthrough', 'success', 'growth', 'innovation', 'celebrates', 'milestone', 'positive', 'rises', 'gains', 'soars', 'wins', 'surges', 'profit', 'record', 'best']
+      : ['상승', '급등', '호재', '성공', '성장', '혁신', '최고', '기대', '강세', '돌파', '이익', '기록', '최대', '확대', '유망'];
+    const negativeWords = language === 'en'
+      ? ['concerns', 'challenges', 'struggles', 'falls', 'drops', 'crisis', 'fails', 'loss', 'decline', 'hurdles', 'volatility', 'crash', 'worst', 'plunges', 'risks']
+      : ['하락', '급락', '우려', '실패', '감소', '위기', '손실', '악재', '약세', '부진', '충격', '폭락', '최저', '축소', '위험'];
 
     let positive = 0, negative = 0, neutral = 0;
     const analyzedArticles = [];
@@ -103,11 +161,11 @@ export default function VibeCheckApp() {
   };
 
   const getVibeLabel = (score) => {
-    if (score >= 75) return 'Very Positive';
-    if (score >= 60) return 'Positive';
-    if (score >= 45) return 'Neutral';
-    if (score >= 30) return 'Negative';
-    return 'Very Negative';
+    if (score >= 75) return language === 'en' ? 'Very Positive' : '매우 긍정적';
+    if (score >= 60) return language === 'en' ? 'Positive' : '긍정적';
+    if (score >= 45) return language === 'en' ? 'Neutral' : '중립적';
+    if (score >= 30) return language === 'en' ? 'Negative' : '부정적';
+    return language === 'en' ? 'Very Negative' : '매우 부정적';
   };
 
   useEffect(() => {
@@ -124,12 +182,30 @@ export default function VibeCheckApp() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
+        {/* Language Toggle */}
+        <div className="flex justify-end mb-4">
+          <div className="bg-slate-800/50 backdrop-blur-md rounded-full p-1 border border-slate-700/50">
+            <button
+              onClick={() => setLanguage('en')}
+              className={`px-4 py-1 rounded-full text-xs font-bold transition-all ${language === 'en' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'}`}
+            >
+              EN
+            </button>
+            <button
+              onClick={() => setLanguage('ko')}
+              className={`px-4 py-1 rounded-full text-xs font-bold transition-all ${language === 'ko' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'}`}
+            >
+              KO
+            </button>
+          </div>
+        </div>
+
         {/* Header */}
         <header className="text-center mb-8">
           <h1 className="text-5xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
-            Vibe-Check
+            {t.title}
           </h1>
-          <p className="text-gray-400">Global Sentiment Tracker</p>
+          <p className="text-gray-400">{t.subtitle}</p>
         </header>
 
         {/* Search Bar */}
@@ -143,7 +219,7 @@ export default function VibeCheckApp() {
                   value={keyword}
                   onChange={(e) => setKeyword(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && analyzeVibe(keyword)}
-                  placeholder="Enter keyword (e.g., Bitcoin, Tesla, K-Pop)"
+                  placeholder={t.placeholder}
                   className="w-full pl-11 pr-4 py-3 bg-slate-700/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-400"
                 />
               </div>
@@ -153,7 +229,7 @@ export default function VibeCheckApp() {
                 className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg font-semibold hover:from-purple-600 hover:to-pink-700 transition-all disabled:opacity-50 flex items-center gap-2"
               >
                 {loading ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
-                {loading ? 'Analyzing...' : 'Analyze'}
+                {loading ? t.analyzing : t.analyze}
               </button>
             </div>
 
@@ -188,7 +264,7 @@ export default function VibeCheckApp() {
               <div className="md:col-span-2 bg-slate-800/50 backdrop-blur-lg rounded-2xl p-8 shadow-2xl">
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <h2 className="text-2xl font-bold mb-1">"{vibeData.keyword}" Vibe Score</h2>
+                    <h2 className="text-2xl font-bold mb-1">"{vibeData.keyword}" {language === 'en' ? 'Vibe Score' : '바이브 점수'}</h2>
                     <p className="text-gray-400 text-sm">{vibeData.timestamp}</p>
                   </div>
                   <div className={`${getVibeColor(vibeData.vibeScore)}`}>
@@ -204,7 +280,7 @@ export default function VibeCheckApp() {
                     <div className={`text-2xl font-semibold ${getVibeColor(vibeData.vibeScore)}`}>
                       {getVibeLabel(vibeData.vibeScore)}
                     </div>
-                    <div className="text-gray-400">out of 100</div>
+                    <div className="text-gray-400">{t.outOf100}</div>
                   </div>
                 </div>
 
@@ -219,7 +295,7 @@ export default function VibeCheckApp() {
                 </div>
 
                 <div className="text-center text-sm text-gray-400 mt-2">
-                  Based on {vibeData.total} recent articles
+                  {t.basedOn} {vibeData.total}{t.recentArticles}
                 </div>
               </div>
 
@@ -227,13 +303,13 @@ export default function VibeCheckApp() {
               <div className="bg-slate-800/50 backdrop-blur-lg rounded-2xl p-6 shadow-2xl">
                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                   <BarChart3 className="w-5 h-5" />
-                  Breakdown
+                  {t.breakdown}
                 </h3>
 
                 <div className="space-y-4">
                   <div>
                     <div className="flex justify-between mb-1">
-                      <span className="text-green-400">Positive</span>
+                      <span className="text-green-400">{t.positive}</span>
                       <span className="font-semibold">{vibeData.positivePercent}%</span>
                     </div>
                     <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
@@ -243,7 +319,7 @@ export default function VibeCheckApp() {
 
                   <div>
                     <div className="flex justify-between mb-1">
-                      <span className="text-yellow-400">Neutral</span>
+                      <span className="text-yellow-400">{t.neutral}</span>
                       <span className="font-semibold">{vibeData.neutralPercent}%</span>
                     </div>
                     <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
@@ -253,7 +329,7 @@ export default function VibeCheckApp() {
 
                   <div>
                     <div className="flex justify-between mb-1">
-                      <span className="text-red-400">Negative</span>
+                      <span className="text-red-400">{t.negative}</span>
                       <span className="font-semibold">{vibeData.negativePercent}%</span>
                     </div>
                     <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
@@ -266,15 +342,15 @@ export default function VibeCheckApp() {
                   <div className="grid grid-cols-3 gap-2 text-center">
                     <div>
                       <div className="text-2xl font-bold text-green-400">{vibeData.positive}</div>
-                      <div className="text-xs text-gray-400">Positive</div>
+                      <div className="text-xs text-gray-400">{t.positive}</div>
                     </div>
                     <div>
                       <div className="text-2xl font-bold text-yellow-400">{vibeData.neutral}</div>
-                      <div className="text-xs text-gray-400">Neutral</div>
+                      <div className="text-xs text-gray-400">{t.neutral}</div>
                     </div>
                     <div>
                       <div className="text-2xl font-bold text-red-400">{vibeData.negative}</div>
-                      <div className="text-xs text-gray-400">Negative</div>
+                      <div className="text-xs text-gray-400">{t.negative}</div>
                     </div>
                   </div>
                 </div>
@@ -285,7 +361,7 @@ export default function VibeCheckApp() {
           {/* Recent Articles */}
           {vibeData && vibeData.articles.length > 0 && (
             <article className="bg-slate-800/50 backdrop-blur-lg rounded-2xl p-6 shadow-2xl">
-              <h3 className="text-xl font-semibold mb-4">Recent Headlines</h3>
+              <h3 className="text-xl font-semibold mb-4">{t.recentHeadlines}</h3>
               <div className="space-y-3">
                 {vibeData.articles.map((article, i) => (
                   <div
