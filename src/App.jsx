@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, TrendingUp, TrendingDown, Minus, RefreshCw, BarChart3 } from 'lucide-react';
+import { Search, TrendingUp, TrendingDown, Minus, RefreshCw, BarChart3, Sun, Moon } from 'lucide-react';
 
 export default function VibeCheckApp() {
   const [keyword, setKeyword] = useState('Bitcoin');
@@ -8,6 +8,7 @@ export default function VibeCheckApp() {
   const [error, setError] = useState(null);
   const [language, setLanguage] = useState('en');
   const [displayKeywords, setDisplayKeywords] = useState([]);
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
   const translations = {
     en: {
@@ -268,12 +269,34 @@ export default function VibeCheckApp() {
     }
   }, [language]);
 
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white p-4 md:p-8">
+    <div className={`min-h-screen transition-colors duration-300 p-4 md:p-8 ${isDarkMode
+        ? 'bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white'
+        : 'bg-gradient-to-br from-slate-50 via-white to-slate-100 text-slate-900'
+      }`}>
       <div className="max-w-6xl mx-auto">
-        {/* Language Toggle */}
-        <div className="flex justify-end mb-4">
-          <div className="bg-slate-800/50 backdrop-blur-md rounded-full p-1 border border-slate-700/50">
+        {/* Language & Theme Toggle */}
+        <div className="flex justify-end gap-3 mb-4">
+          <button
+            onClick={() => setIsDarkMode(!isDarkMode)}
+            className={`p-2 rounded-full border transition-all ${isDarkMode
+                ? 'bg-slate-800/50 border-slate-700/50 text-yellow-400 hover:bg-slate-700/50'
+                : 'bg-white border-slate-200 text-purple-600 shadow-sm hover:bg-slate-50'
+              }`}
+            aria-label="Toggle dark mode"
+          >
+            {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
+          <div className={`backdrop-blur-md rounded-full p-1 border transition-all ${isDarkMode ? 'bg-slate-800/50 border-slate-700/50' : 'bg-white border-slate-200 shadow-sm'
+            }`}>
             <button
               onClick={() => setLanguage('en')}
               className={`px-4 py-1 rounded-full text-xs font-bold transition-all ${language === 'en' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'}`}
@@ -306,22 +329,27 @@ export default function VibeCheckApp() {
           <h1 className="text-5xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
             {t.title}
           </h1>
-          <p className="text-gray-400">{t.subtitle}</p>
+          <p className={`${isDarkMode ? 'text-gray-400' : 'text-slate-600'}`}>{t.subtitle}</p>
         </header>
 
         {/* Search Bar */}
         <main>
-          <section className="bg-slate-800/50 backdrop-blur-lg rounded-2xl p-6 mb-6 shadow-2xl" aria-label="Search and analyze sentiment">
+          <section className={`backdrop-blur-lg rounded-2xl p-6 mb-6 shadow-2xl transition-all ${isDarkMode ? 'bg-slate-800/50' : 'bg-white border border-slate-100'
+            }`} aria-label="Search and analyze sentiment">
             <div className="flex gap-3 mb-4">
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${isDarkMode ? 'text-gray-400' : 'text-slate-400'
+                  }`} />
                 <input
                   type="text"
                   value={keyword}
                   onChange={(e) => setKeyword(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && analyzeVibe(keyword)}
                   placeholder={t.placeholder}
-                  className="w-full pl-11 pr-4 py-3 bg-slate-700/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-400"
+                  className={`w-full pl-11 pr-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all ${isDarkMode
+                      ? 'bg-slate-700/50 text-white placeholder-gray-400'
+                      : 'bg-slate-50 text-slate-900 border border-slate-200 placeholder-slate-400'
+                    }`}
                 />
               </div>
               <button
@@ -343,7 +371,10 @@ export default function VibeCheckApp() {
                     setKeyword(k);
                     analyzeVibe(k);
                   }}
-                  className="px-3 py-1 bg-slate-700/50 hover:bg-slate-600/50 rounded-full text-sm transition-all"
+                  className={`px-3 py-1 rounded-full text-sm transition-all ${isDarkMode
+                      ? 'bg-slate-700/50 hover:bg-slate-600/50 text-white'
+                      : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                    }`}
                 >
                   {k}
                 </button>
@@ -362,11 +393,12 @@ export default function VibeCheckApp() {
           {vibeData && (
             <section className="grid md:grid-cols-3 gap-6 mb-6" aria-label="Sentiment analysis results">
               {/* Main Vibe Score */}
-              <div className="md:col-span-2 bg-slate-800/50 backdrop-blur-lg rounded-2xl p-8 shadow-2xl">
+              <div className={`backdrop-blur-lg rounded-2xl p-8 shadow-2xl transition-all ${isDarkMode ? 'bg-slate-800/50' : 'bg-white border border-slate-100'
+                }`}>
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <h2 className="text-2xl font-bold mb-1">"{vibeData.keyword}" {t.vibeScore}</h2>
-                    <p className="text-gray-400 text-sm">{vibeData.timestamp}</p>
+                    <p className={`${isDarkMode ? 'text-gray-400' : 'text-slate-500'} text-sm`}>{vibeData.timestamp}</p>
                   </div>
                   <div className={`${getVibeColor(vibeData.vibeScore)}`}>
                     {getVibeIcon(vibeData.vibeScore)}
@@ -381,12 +413,12 @@ export default function VibeCheckApp() {
                     <div className={`text-2xl font-semibold ${getVibeColor(vibeData.vibeScore)}`}>
                       {getVibeLabel(vibeData.vibeScore)}
                     </div>
-                    <div className="text-gray-400">{t.outOf100}</div>
+                    <div className={`${isDarkMode ? 'text-gray-400' : 'text-slate-500'}`}>{t.outOf100}</div>
                   </div>
                 </div>
 
                 {/* Progress Bar */}
-                <div className="h-4 bg-slate-700 rounded-full overflow-hidden">
+                <div className={`h-4 rounded-full overflow-hidden ${isDarkMode ? 'bg-slate-700' : 'bg-slate-200'}`}>
                   <div
                     className={`h-full transition-all duration-1000 ${vibeData.vibeScore >= 65 ? 'bg-green-500' :
                       vibeData.vibeScore >= 45 ? 'bg-yellow-500' : 'bg-red-500'
@@ -395,13 +427,14 @@ export default function VibeCheckApp() {
                   />
                 </div>
 
-                <div className="text-center text-sm text-gray-400 mt-2">
+                <div className={`text-center text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-slate-500'}`}>
                   {t.basedOn} {vibeData.total}{t.recentArticles}
                 </div>
               </div>
 
               {/* Sentiment Breakdown */}
-              <div className="bg-slate-800/50 backdrop-blur-lg rounded-2xl p-6 shadow-2xl">
+              <div className={`backdrop-blur-lg rounded-2xl p-6 shadow-2xl transition-all ${isDarkMode ? 'bg-slate-800/50' : 'bg-white border border-slate-100'
+                }`}>
                 <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
                   <BarChart3 className="w-5 h-5" />
                   {t.breakdown}
@@ -410,48 +443,48 @@ export default function VibeCheckApp() {
                 <div className="space-y-4">
                   <div>
                     <div className="flex justify-between mb-1">
-                      <span className="text-green-400">{t.positive}</span>
+                      <span className="text-green-500">{t.positive}</span>
                       <span className="font-semibold">{vibeData.positivePercent}%</span>
                     </div>
-                    <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                    <div className={`h-2 rounded-full overflow-hidden ${isDarkMode ? 'bg-slate-700' : 'bg-slate-200'}`}>
                       <div className="h-full bg-green-500 transition-all duration-500" style={{ width: `${vibeData.positivePercent}%` }} />
                     </div>
                   </div>
 
                   <div>
                     <div className="flex justify-between mb-1">
-                      <span className="text-yellow-400">{t.neutral}</span>
+                      <span className="text-yellow-500">{t.neutral}</span>
                       <span className="font-semibold">{vibeData.neutralPercent}%</span>
                     </div>
-                    <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                    <div className={`h-2 rounded-full overflow-hidden ${isDarkMode ? 'bg-slate-700' : 'bg-slate-200'}`}>
                       <div className="h-full bg-yellow-500 transition-all duration-500" style={{ width: `${vibeData.neutralPercent}%` }} />
                     </div>
                   </div>
 
                   <div>
                     <div className="flex justify-between mb-1">
-                      <span className="text-red-400">{t.negative}</span>
+                      <span className="text-red-500">{t.negative}</span>
                       <span className="font-semibold">{vibeData.negativePercent}%</span>
                     </div>
-                    <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                    <div className={`h-2 rounded-full overflow-hidden ${isDarkMode ? 'bg-slate-700' : 'bg-slate-200'}`}>
                       <div className="h-full bg-red-500 transition-all duration-500" style={{ width: `${vibeData.negativePercent}%` }} />
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-slate-700">
+                <div className={`mt-6 pt-4 border-t ${isDarkMode ? 'border-slate-700' : 'border-slate-100'}`}>
                   <div className="grid grid-cols-3 gap-2 text-center">
                     <div>
-                      <div className="text-2xl font-bold text-green-400">{vibeData.positive}</div>
-                      <div className="text-xs text-gray-400">{t.positive}</div>
+                      <div className="text-2xl font-bold text-green-500">{vibeData.positive}</div>
+                      <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-slate-500'}`}>{t.positive}</div>
                     </div>
                     <div>
-                      <div className="text-2xl font-bold text-yellow-400">{vibeData.neutral}</div>
-                      <div className="text-xs text-gray-400">{t.neutral}</div>
+                      <div className="text-2xl font-bold text-yellow-500">{vibeData.neutral}</div>
+                      <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-slate-500'}`}>{t.neutral}</div>
                     </div>
                     <div>
-                      <div className="text-2xl font-bold text-red-400">{vibeData.negative}</div>
-                      <div className="text-xs text-gray-400">{t.negative}</div>
+                      <div className="text-2xl font-bold text-red-500">{vibeData.negative}</div>
+                      <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-slate-500'}`}>{t.negative}</div>
                     </div>
                   </div>
                 </div>
@@ -461,18 +494,20 @@ export default function VibeCheckApp() {
 
           {/* Recent Articles */}
           {vibeData && vibeData.articles.length > 0 && (
-            <article className="bg-slate-800/50 backdrop-blur-lg rounded-2xl p-6 shadow-2xl">
+            <article className={`backdrop-blur-lg rounded-2xl p-6 shadow-2xl transition-all ${isDarkMode ? 'bg-slate-800/50' : 'bg-white border border-slate-100'
+              }`}>
               <h3 className="text-xl font-semibold mb-4">{t.recentHeadlines}</h3>
               <div className="space-y-3">
                 {vibeData.articles.map((article, i) => (
                   <div
                     key={i}
-                    className="p-4 bg-slate-700/30 rounded-lg hover:bg-slate-700/50 transition-all cursor-pointer"
+                    className={`p-4 rounded-lg transition-all cursor-pointer ${isDarkMode ? 'bg-slate-700/30 hover:bg-slate-700/50' : 'bg-slate-50 hover:bg-slate-100'
+                      }`}
                     onClick={() => article.url && window.open(article.url, '_blank')}
                   >
                     <div className="flex items-start gap-3">
-                      <div className={`mt-1 flex-shrink-0 ${article.sentiment === 'positive' ? 'text-green-400' :
-                        article.sentiment === 'negative' ? 'text-red-400' : 'text-yellow-400'
+                      <div className={`mt-1 flex-shrink-0 ${article.sentiment === 'positive' ? 'text-green-500' :
+                        article.sentiment === 'negative' ? 'text-red-500' : 'text-yellow-500'
                         }`}>
                         {article.sentiment === 'positive' ? <TrendingUp className="w-5 h-5" /> :
                           article.sentiment === 'negative' ? <TrendingDown className="w-5 h-5" /> :
@@ -481,9 +516,9 @@ export default function VibeCheckApp() {
                       <div className="flex-1 min-w-0">
                         <h4 className="font-semibold mb-1 line-clamp-2">{article.title}</h4>
                         {article.description && (
-                          <p className="text-sm text-gray-400 mb-2 line-clamp-2">{article.description}</p>
+                          <p className={`text-sm mb-2 line-clamp-2 ${isDarkMode ? 'text-gray-400' : 'text-slate-600'}`}>{article.description}</p>
                         )}
-                        <div className="flex items-center gap-3 text-xs text-gray-500">
+                        <div className={`flex items-center gap-3 text-xs ${isDarkMode ? 'text-gray-500' : 'text-slate-400'}`}>
                           <span className="truncate">{article.source?.name || 'Unknown'}</span>
                           <span>•</span>
                           <span>{new Date(article.publishedAt).toLocaleDateString()}</span>
