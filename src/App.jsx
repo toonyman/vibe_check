@@ -10,6 +10,7 @@ export default function VibeCheckApp() {
   const [language, setLanguage] = useState('en');
   const [displayKeywords, setDisplayKeywords] = useState([]);
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const [trendPeriod, setTrendPeriod] = useState('7d');
 
   const translations = {
     en: {
@@ -534,11 +535,31 @@ export default function VibeCheckApp() {
                   <Calendar className="w-5 h-5" />
                   {t.vibeTrend}
                 </h3>
+                <div className={`flex p-1 rounded-lg ${isDarkMode ? 'bg-slate-700/50' : 'bg-slate-100'}`}>
+                  <button
+                    onClick={() => setTrendPeriod('7d')}
+                    className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${trendPeriod === '7d'
+                        ? (isDarkMode ? 'bg-purple-600 text-white' : 'bg-white text-purple-600 shadow-sm')
+                        : (isDarkMode ? 'text-gray-400 hover:text-white' : 'text-slate-500 hover:text-slate-900')
+                      }`}
+                  >
+                    {t.period7d}
+                  </button>
+                  <button
+                    onClick={() => setTrendPeriod('30d')}
+                    className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${trendPeriod === '30d'
+                        ? (isDarkMode ? 'bg-purple-600 text-white' : 'bg-white text-purple-600 shadow-sm')
+                        : (isDarkMode ? 'text-gray-400 hover:text-white' : 'text-slate-500 hover:text-slate-900')
+                      }`}
+                  >
+                    {t.period30d}
+                  </button>
+                </div>
               </div>
 
               <div className="h-64 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={vibeData.trendData}>
+                  <AreaChart data={trendPeriod === '7d' ? vibeData.trendData.slice(-7) : vibeData.trendData}>
                     <defs>
                       <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
