@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://vibe-check.vercel.app/sitemap.xml
+Sitemap: https://vibe-check-self.vercel.app/sitemap.xml
 
 # Crawl-delay (optional, helps prevent overload)
 Crawl-delay: 1
