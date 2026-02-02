@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, TrendingUp, TrendingDown, Minus, RefreshCw, BarChart3, Sun, Moon, Calendar } from 'lucide-react';
+import { Search, TrendingUp, TrendingDown, Minus, RefreshCw, BarChart3, Sun, Moon, Calendar, Share2, Facebook, Twitter, Linkedin, Link, Check } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 
 export default function VibeCheckApp() {
@@ -11,6 +11,7 @@ export default function VibeCheckApp() {
   const [displayKeywords, setDisplayKeywords] = useState([]);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const [trendPeriod, setTrendPeriod] = useState('7d');
+  const [copied, setCopied] = useState(false);
 
   const translations = {
     en: {
@@ -39,6 +40,9 @@ export default function VibeCheckApp() {
       apiKeyInvalid: 'API key is invalid. Please check environment variables in Vercel.',
       rateLimited: 'Rate limit exceeded. Please try again later.',
       apiKeyMissing: 'API key not configured. Please set NEWS_API_KEY in Vercel.',
+      share: 'Share',
+      copyUrl: 'Copy Link',
+      copied: 'Copied!',
     },
     ko: {
       title: '바이브-체크',
@@ -66,6 +70,9 @@ export default function VibeCheckApp() {
       apiKeyInvalid: 'API 키가 유효하지 않습니다. Vercel 환경 변수를 확인해주세요.',
       rateLimited: '요청 한도를 초과했습니다. 나중에 다시 시도해주세요.',
       apiKeyMissing: 'API 키가 설정되지 않았습니다. NEWS_API_KEY를 설정해주세요.',
+      share: '공유하기',
+      copyUrl: '링크 복사',
+      copied: '복사됨!',
     },
     jp: {
       title: 'バイブ・チェック',
@@ -93,6 +100,9 @@ export default function VibeCheckApp() {
       apiKeyInvalid: 'APIキーが無効です。',
       rateLimited: 'レート制限を超えました。',
       apiKeyMissing: 'APIキーが設定されていません。',
+      share: '共有する',
+      copyUrl: 'リンクをコピー',
+      copied: 'コピーされました！',
     },
     es: {
       title: 'Vibe-Check',
@@ -120,6 +130,9 @@ export default function VibeCheckApp() {
       apiKeyInvalid: 'Clave API no válida.',
       rateLimited: 'Límite de velocidad excedido.',
       apiKeyMissing: 'Falta la clave API.',
+      share: 'Compartir',
+      copyUrl: 'Copiar enlace',
+      copied: '¡Copiado!',
     }
   };
 
@@ -149,6 +162,29 @@ export default function VibeCheckApp() {
       'Telefónica', 'Iberdrola', 'Mercadona', 'TikTok', 'Instagram', 'Spotify', 'Uber', 'Airbnb', 'Nike', 'Lionel Messi',
       'Rosalía', 'Shakira', 'Bad Bunny', 'La Casa de Papel', 'Cervantes', 'Almodóvar', 'Dalí', 'Picasso', 'Paella'
     ]
+  };
+
+  const shareTo = (platform) => {
+    const url = 'https://vibe-check-self.vercel.app/';
+    const text = `Check out the current vibe for "${vibeData?.keyword || keyword}"!`;
+    const shareUrls = {
+      meta: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+      x: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`,
+      reddit: `https://www.reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(text)}`,
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+    };
+
+    if (shareUrls[platform]) {
+      window.open(shareUrls[platform], '_blank', 'width=600,height=400');
+    }
+  };
+
+  const copyToClipboard = () => {
+    const url = 'https://vibe-check-self.vercel.app/';
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
   };
 
   const getRandomKeywords = (lang, count = 10) => {
@@ -463,6 +499,57 @@ export default function VibeCheckApp() {
 
                 <div className={`text-center text-sm mt-2 ${isDarkMode ? 'text-gray-400' : 'text-slate-500'}`}>
                   {t.basedOn} {vibeData.total}{t.recentArticles}
+                </div>
+
+                {/* Share Section */}
+                <div className={`mt-6 pt-6 border-t ${isDarkMode ? 'border-slate-700/50' : 'border-slate-100'} flex flex-col sm:flex-row items-center justify-between gap-4`}>
+                  <div className="flex items-center gap-2 text-sm font-semibold opacity-80">
+                    <Share2 className="w-4 h-4" />
+                    {t.share}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => shareTo('meta')}
+                      className={`p-2 rounded-full transition-all ${isDarkMode ? 'bg-slate-700/50 hover:bg-blue-600/20 text-blue-400' : 'bg-blue-50 hover:bg-blue-100 text-blue-600'}`}
+                      title="Facebook"
+                    >
+                      <Facebook className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={() => shareTo('x')}
+                      className={`p-2 rounded-full transition-all ${isDarkMode ? 'bg-slate-700/50 hover:bg-white/10 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-900'}`}
+                      title="X (Twitter)"
+                    >
+                      <Twitter className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={() => shareTo('reddit')}
+                      className={`p-2 rounded-full transition-all ${isDarkMode ? 'bg-slate-700/50 hover:bg-orange-600/20 text-orange-500' : 'bg-orange-50 hover:bg-orange-100 text-orange-600'}`}
+                      title="Reddit"
+                    >
+                      <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                        <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.752c1.824.07 3.48.632 4.674 1.488.308-.362.727-.552 1.205-.552.922 0 1.673.75 1.673 1.673 0 .54-.257 1.05-.724 1.343.02.164.032.333.032.502 0 2.22-2.73 4.02-6.07 4.02-3.34 0-6.07-1.8-6.07-4.02 0-.16.012-.317.032-.472a1.66 1.66 0 0 1-.749-1.373c0-.922.75-1.673 1.673-1.673.456 0 .86.177 1.163.483 1.189-.838 2.812-1.39 4.604-1.472l.745-3.513 3.02.636a1.22 1.22 0 0 1 .253.791zm-7.618 7.373c-.703 0-1.274.571-1.274 1.274 0 .702.571 1.273 1.274 1.273.702 0 1.273-.571 1.273-1.273s-.571-1.274-1.273-1.274zm6.052 2.547a4.93 4.93 0 0 1-3.414 1.135 4.93 4.93 0 0 1-3.414-1.135.253.253 0 0 1 .351-.35c.983.82 2.12 1.228 3.063 1.228.943 0 2.08-.408 3.063-1.229a.253.253 0 0 1 .351.351zm-.51-1.273a1.274 1.274 0 0 1 1.273-1.274 1.274 1.274 0 1 1 0 2.548 1.274 1.274 0 0 1-1.273-1.274z" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={() => shareTo('linkedin')}
+                      className={`p-2 rounded-full transition-all ${isDarkMode ? 'bg-slate-700/50 hover:bg-blue-500/20 text-blue-500' : 'bg-blue-50 hover:bg-blue-100 text-blue-700'}`}
+                      title="LinkedIn"
+                    >
+                      <Linkedin className="w-5 h-5" />
+                    </button>
+                    <div className="w-[1px] h-4 bg-slate-700 mx-2 hidden sm:block" />
+                    <button
+                      onClick={copyToClipboard}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all ${copied
+                        ? 'bg-green-500 text-white'
+                        : (isDarkMode ? 'bg-slate-700/50 hover:bg-slate-600/50 text-white' : 'bg-slate-100 hover:bg-slate-200 text-slate-700')
+                        }`}
+                    >
+                      {copied ? <Check className="w-4 h-4" /> : <Link className="w-4 h-4" />}
+                      <span className="text-xs font-bold uppercase">{copied ? t.copied : t.copyUrl}</span>
+                    </button>
+                  </div>
                 </div>
               </div>
 
